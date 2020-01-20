@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.system.dao.IMenuDao">
+
+    <resultMap id="BaseResult" type="com.whli.autumn.model.system.Menu">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="name" property="name"/>
+        <result column="sort" property="sort"/>
+        <result column="href" property="href"/>
+        <result column="target" property="target"/>
+        <result column="menu_icon" property="menuIcon"/>
+        <result column="enabled" property="enabled"/>
+        <result column="deleted" property="deleted"/>
+        <result column="remark" property="remark"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+
+    <resultMap id="RM_IndexMenu" type="com.whli.autumn.system.dto.MenuDTO" extends="BaseResult">
+        <result column="user_id"/>
+        <result column="company_id"/>
+        <result column="super_admin"/>
+        <collection property="children" column="{entity.parentId=id,entity.userId=user_id,entity.companyId=company_id,entity.superAdmin=super_admin}" select="listMenuByUserAndCompanyAndParent"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		id,parent_id,name,sort,href,target,menu_icon,enabled,remark,create_by,create_date,update_by,update_date,deleted
+
+        ]]>
+	</sql>
+
+    <sql id="conditions">
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND id = #{entity.id}
+            </if>
+            <if test="entity.parentId != null and entity.parentId !=''">
+                AND parent_id = #{entity.parentId}
+            </if>
+            <if test="entity.name != null and entity.name !=''">
+                AND name = #{entity.name}
+            </if>
+            <if test="entity.sort != null and entity.sort !=''">
+                AND sort = #{entity.sort}
+            </if>
+            <if test="entity.href != null and entity.href !=''">
+                AND href = #{entity.href}
+            </if>
+            <if test="entity.target != null and entity.target !=''">
+                AND target = #{entity.target}
+            </if>
+            <if test="entity.menuIcon != null and entity.menuIcon !=''">
+                AND menu_icon = #{entity.menuIcon}
+            </if>
+            <if test="entity.enabled != null and entity.enabled !=''">
+                AND enabled = #{entity.enabled}
+            </if>
+            <if test="entity.remark != null and entity.remark !=''">
+                AND remark = #{entity.remark}
+            </if>
+            <if test="entity.createBy != null and entity.createBy !=''">
+                AND create_by = #{entity.createBy}
+            </if>
+            <if test="entity.createDate != null and entity.createDate !=''">
+                AND create_date = #{entity.createDate}
+            </if>
+            <if test="entity.updateBy != null and entity.updateBy !=''">
+                AND update_by = #{entity.updateBy}
+            </if>
+            <if test="entity.updateDate != null and entity.updateDate !=''">
+                AND update_date = #{entity.updateDate}
+            </if>
+            <if test="entity.deleted != null and entity.deleted !=''">
+                AND deleted = #{entity.deleted}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 根据用户及角色获取菜单 -->
+    <select id="listMenuByUserAndCompanyAndParent" resultMap="RM_IndexMenu">
+        <choose>
+            <when test="entity.superAdmin != null and entity.superAdmin != ''">
+                SELECT
+                DISTINCT a.*,'${entity.userId}' AS user_id,'${entity.companyId}' AS company_id, '${entity.superAdmin}' AS super_admin
+                FROM ts_menu a
+                WHERE a.enabled = '1' AND a.deleted = 0 AND (a.target IS NULL OR a.target != 'BUTTON')
+                AND a.parent_id = #{entity.parentId}
+                ORDER BY a.sort
+            </when>
+            <otherwise>
+                SELECT
+                DISTINCT a.*,'${entity.userId}' AS user_id,'${entity.companyId}' AS company_id, '${entity.superAdmin}' AS super_admin
+                FROM ts_menu a
+                INNER JOIN ts_role_menu b ON a.id = b.menu_id
+                INNER JOIN ts_role c ON b.role_id = c.id
+                INNER JOIN ts_user_role d ON c.id = d.role_id
+                INNER JOIN ts_user e ON d.user_id = e.id
+                INNER JOIN ts_user_company f ON e.id = f.user_id
+                WHERE a.enabled = '1' AND a.deleted = 0 AND c.enabled = '1' AND (a.target IS NULL OR a.target != 'BUTTON')
+                AND a.parent_id = #{entity.parentId}
+                AND f.company_id = #{entity.companyId} AND f.user_id = #{entity.userId}
+                ORDER BY a.sort
+            </otherwise>
+        </choose>
+	</select>
+
+    <!-- 根据用户及角色获取按钮 -->
+    <select id="listButtonByUserAndCompanyAndParentUrl" resultMap="BaseResult">
+        <choose>
+            <when test="entity.superAdmin != null and entity.superAdmin != ''">
+                SELECT
+                DISTINCT a.*
+                FROM ts_menu a
+                INNER JOIN ts_menu b ON  a.parent_id = b.id
+                WHERE a.enabled = '1' AND a.deleted = 0 AND a.target = 'BUTTON' AND b.href LIKE '%${entity.href}%'
+                ORDER BY a.sort
+            </when>
+            <otherwise>
+                SELECT
+                DISTINCT a.*
+                FROM ts_menu a
+                INNER JOIN ts_role_menu b ON a.id = b.menu_id
+                INNER JOIN ts_role c ON b.role_id = c.id
+                INNER JOIN ts_user_role d ON c.id = d.role_id
+                INNER JOIN ts_user e ON d.user_id = e.id
+                INNER JOIN ts_user_company f ON e.id = f.user_id
+                INNER JOIN ts_menu e ON a.parent_id = e.id
+                WHERE a.enabled = '1' AND a.deleted = 0 AND c.enabled = '1' AND e.target = 'BUTTON'
+                AND a.href LIKE '%${entity.href}%'
+                AND f.company_id = #{entity.companyId} AND f.user_id = #{entity.userId}
+                ORDER BY a.sort
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 验证菜单名称、排序唯一性 -->
+    <select id="validate" resultMap="BaseResult">
+        SELECT
+        <include refid="columns"/>
+        FROM ts_menu
+        <where>
+            <if test="entity.parentId != null and entity.parentId !=''">
+                AND parent_id = #{entity.parentId}
+            </if>
+            <if test="entity.sort != null">
+                AND sort = #{entity.sort}
+            </if>
+            <if test="entity.name != null and entity.name != ''">
+                AND name = #{entity.name}
+            </if>
+            <if test="entity.id != null and entity.id != ''">
+                AND id != #{entity.id}
+            </if>
+        </where>
+    </select>
+</mapper>
+

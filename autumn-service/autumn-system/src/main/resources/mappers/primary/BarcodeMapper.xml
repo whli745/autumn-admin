@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.system.dao.IBarcodeDao">
+
+    <resultMap id="BaseResult" type="com.whli.autumn.model.system.Barcode">
+        <id column="id" property="id"/>
+        <result column="sequence_id" property="sequenceId"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="enabled" property="enabled"/>
+        <result column="remark" property="remark"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+
+    <resultMap id="BarcodeDTO" type="com.whli.autumn.system.dto.BarcodeDTO" extends="BaseResult">
+        <result column="sequence_name" property="sequenceName"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		id,sequence_id,code,name,enabled,remark,create_by,create_date,update_by,update_date
+
+        ]]>
+	</sql>
+
+    <sql id="conditions">
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND id = #{entity.id}
+            </if>
+            <if test="entity.sequenceId != null and entity.sequenceId !=''">
+                AND sequence_id = #{entity.sequenceId}
+            </if>
+            <if test="entity.code != null and entity.code !=''">
+                AND code = #{entity.code}
+            </if>
+            <if test="entity.name != null and entity.name !=''">
+                AND name = #{entity.name}
+            </if>
+            <if test="entity.enabled != null and entity.enabled !=''">
+                AND enabled = #{entity.enabled}
+            </if>
+            <if test="entity.remark != null and entity.remark !=''">
+                AND remark = #{entity.remark}
+            </if>
+            <if test="entity.createBy != null and entity.createBy !=''">
+                AND create_by = #{entity.createBy}
+            </if>
+            <if test="entity.createDate != null and entity.createDate !=''">
+                AND create_date = #{entity.createDate}
+            </if>
+            <if test="entity.updateBy != null and entity.updateBy !=''">
+                AND update_by = #{entity.updateBy}
+            </if>
+            <if test="entity.updateDate != null and entity.updateDate !=''">
+                AND update_date = #{entity.updateDate}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询，并关联条码规则 -->
+    <select id="listBarcodeByPage" resultMap="BarcodeDTO">
+        SELECT
+          a.*,
+          b.name sequence_name
+        FROM ts_barcode a
+        LEFT JOIN ts_sequence b ON a.sequence_id = b.id
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND a.id = #{entity.id}
+            </if>
+            <if test="entity.code != null and entity.code !=''">
+                AND a.code LIKE CONCAT(#{entity.code},'%')
+            </if>
+            <if test="entity.name != null and entity.name !=''">
+                AND a.name = LIKE CONCAT(#{entity.name},'%')
+            </if>
+            <if test="entity.enabled != null and entity.enabled !=''">
+                AND a.enabled = #{entity.enabled}
+            </if>
+        </where>
+        ORDER BY a.update_date DESC
+    </select>
+
+    <!-- 验证条码生成编码唯一性 -->
+    <select id="validate" resultMap="BaseResult">
+        SELECT
+        <include refid="columns"/>
+        FROM ts_barcode
+        <where>
+            <if test="entity.code != null and entity.code != ''">
+                AND code = #{entity.code}
+            </if>
+            <if test="entity.id != null and entity.id != ''">
+                AND id != #{entity.id}
+            </if>
+        </where>
+    </select>
+</mapper>
+

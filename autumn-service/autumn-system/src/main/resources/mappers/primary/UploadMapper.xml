@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.system.dao.IUploadDao">
+
+	<resultMap id="BaseResult" type="com.whli.autumn.model.system.Upload">
+		<id column="id" property="id" />
+		<result column="company_id" property="companyId" />
+		<result column="unique_key" property="uniqueKey" />
+		<result column="name" property="name" />
+		<result column="type" property="type" />
+		<result column="url" property="url" />
+		<result column="updated" property="updated" />
+		<result column="version" property="version" />
+		<result column="remark" property="remark" />
+		<result column="create_by" property="createBy" />
+		<result column="create_date" property="createDate" />
+		<result column="update_by" property="updateBy" />
+		<result column="update_date" property="updateDate" />
+	</resultMap>
+
+	<resultMap id="BaseMapResult" type="java.util.Map" extends="BaseResult">
+
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		id,company_id,unique_key,name,type,url,updated,version,remark,create_by,create_date,update_by,update_date
+	    ]]>
+	</sql>
+	
+	<sql id="listByPageWhere">
+		<where>
+			<if test="entity.id != null and entity.id !=''">
+				AND id = #{entity.id}
+			</if>
+			<if test="entity.companyId != null and entity.companyId !=''">
+				AND company_id = #{entity.companyId}
+			</if>
+			<if test="entity.uniqueKey != null and entity.uniqueKey !=''">
+				AND unique_key = #{entity.uniqueKey}
+			</if>
+			<if test="entity.name != null and entity.name !=''">
+				AND name = #{entity.name}
+			</if>
+			<if test="entity.type != null and entity.type !=''">
+				AND type = #{entity.type}
+			</if>
+			<if test="entity.url != null and entity.url !=''">
+				AND url = #{entity.url}
+			</if>
+			<if test="entity.updated != null and entity.updated !=''">
+				AND updated = #{entity.updated}
+			</if>
+			<if test="entity.version != null and entity.version !=''">
+				AND version = #{entity.version}
+			</if>
+			<if test="entity.remark != null and entity.remark !=''">
+				AND remark = #{entity.remark}
+			</if>
+			<if test="entity.createBy != null and entity.createBy !=''">
+				AND create_by = #{entity.createBy}
+			</if>
+			<if test="entity.createDate != null and entity.createDate !=''">
+				AND create_date = #{entity.createDate}
+			</if>
+			<if test="entity.updateBy != null and entity.updateBy !=''">
+				AND update_by = #{entity.updateBy}
+			</if>
+			<if test="entity.updateDate != null and entity.updateDate !=''">
+				AND update_date = #{entity.updateDate}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 依据公司、标识、类型查询最大版本号的文件 -->
+	<select id="getMaxVersionByCompanyAndUniqueKeyAndType" resultMap="BaseResult">
+		SELECT
+			a.*
+		FROM ts_upload a
+		INNER JOIN (
+		SELECT b.company_id,b.unique_key,MAX(b.version) version
+		FROM ts_upload b
+		WHERE b.company_id = #{companyId} AND b.unique_key = #{uniqueKey} AND b.type = #{type}
+		GROUP BY b.company_id,b.unique_key) c ON (a.company_id = c.company_id AND a.unique_key = c.unique_key AND a.version = c.version)
+	</select>
+</mapper>
+

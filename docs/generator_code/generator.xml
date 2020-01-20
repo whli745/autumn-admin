@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+    <entry key="author"></entry>
+    <entry key="basepackage"></entry>
+    <!-- jsp namespace: web/${namespace}/${className}/list.jsp -->
+    <entry key="moduleName"></entry>
+    <entry key="outRoot"></entry>
+    <entry key="superEntity">BaseEntity</entry>
+    <entry key="superEntityPackage">com.whli.autumn.core.web.entity</entry>
+    <entry key="superMapper">IBaseDao</entry>
+    <entry key="superMapperPackage">com.whli.autumn.core.web.dao</entry>
+    <entry key="superService">IBaseService</entry>
+    <entry key="superServicePackage">com.whli.autumn.core.web.service</entry>
+    <entry key="superServiceImpl">BaseServiceImpl</entry>
+    <entry key="superServiceImplPackage">com.whli.autumn.core.web.service.impl</entry>
+    <entry key="superController">BaseController</entry>
+    <entry key="superControllerPackage">com.whli.autumn.core.web.controller</entry>
+
+    <!-- 需要移除的表名前缀,使用逗号进行分隔多个前缀,示例值: t_,v_ -->
+    <entry key="tableRemovePrefixes"></entry>
+    <entry key="jdbc_url"></entry>
+    <entry key="jdbc_driver"></entry>
+    <entry key="jdbc_username"></entry>
+    <entry key="jdbc_password"></entry>
+
+    <!-- oracle需要指定jdbc.schema,其它数据库忽略此项配置  -->
+    <entry key="jdbc_schema"></entry>
+    <entry key="jdbc_catalog"></entry>
+
+    <!-- 数据库类型映射  -->
+    <entry key="java_typemapping.java.sql.Timestamp">java.util.Date</entry>
+    <entry key="java_typemapping.java.sql.Date">java.util.Date</entry>
+    <entry key="java_typemapping.java.sql.Time">java.util.Date</entry>
+    <entry key="java_typemapping.java.lang.Byte">Integer</entry>
+    <entry key="java_typemapping.java.lang.Short">Integer</entry>
+    <entry key="java_typemapping.java.math.BigDecimal">Double</entry>
+    <entry key="java_typemapping.java.sql.Clob">String</entry>
+    <entry key="java_typemapping.java.lang.Float">BigDecimal</entry>
+
+</properties>

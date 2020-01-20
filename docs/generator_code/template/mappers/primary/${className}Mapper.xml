@@ -1,0 +1,49 @@
+<#assign className = table.className>
+<#assign classNameFirstLower = table.classNameFirstLower>
+<#macro mapperEl value>${r"#{"}${value}}</#macro>
+<#macro namespace>${className}.</#macro>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="${basepackage}.${moduleName}.dao.I${className}Dao">
+
+	<resultMap id="BaseResult" type="${basepackage}.model.${moduleName}.${className}">
+	<#list table.columns as column>
+	<#if column.pk>
+		<id column="${column.sqlName}" property="id" />
+	<#else>
+		<result column="${column.sqlName}" property="${column.columnNameLower}" />
+	</#if>
+	</#list>
+	</resultMap>
+
+	<resultMap id="BaseMapResult" type="java.util.Map" extends="BaseResult">
+
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		<#list table.columns as column>${column.sqlName}<#if column_has_next>,</#if></#list>
+	    ]]>
+	</sql>
+	
+	<sql id="listByPageWhere">
+		<where>
+	       <#list table.columns as column>
+			<#if column.pk>
+			<if test="entity.id != null and entity.id !=''">
+				AND ${column.sqlName} = <@mapperEl "entity.id"/>
+			</if>
+			<#else>
+			<if test="entity.${column.columnNameFirstLower} != null and entity.${column.columnNameFirstLower} !=''">
+				AND ${column.sqlName} = <@mapperEl "entity."+column.columnNameFirstLower/>
+			</if>
+			</#if>
+	       </#list>
+		</where>
+	</sql>
+</mapper>
+

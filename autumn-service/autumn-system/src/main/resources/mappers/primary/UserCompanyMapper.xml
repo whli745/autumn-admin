@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.system.dao.IUserCompanyDao">
+
+    <resultMap id="BaseResult" type="com.whli.autumn.model.system.UserCompany">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="company_id" property="companyId"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+
+    <resultMap id="BaseMapResult" type="java.util.Map" extends="BaseResult">
+
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		id,user_id,company_id,create_by,create_date,update_by,update_date
+
+        ]]>
+	</sql>
+
+    <sql id="listByPageWhere">
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND id = #{entity.id}
+            </if>
+            <if test="entity.userId != null and entity.userId !=''">
+                AND user_id = #{entity.userId}
+            </if>
+            <if test="entity.companyId != null and entity.companyId !=''">
+                AND company_id = #{entity.companyId}
+            </if>
+            <if test="entity.createBy != null and entity.createBy !=''">
+                AND create_by = #{entity.createBy}
+            </if>
+            <if test="entity.createDate != null and entity.createDate !=''">
+                AND create_date = #{entity.createDate}
+            </if>
+            <if test="entity.updateBy != null and entity.updateBy !=''">
+                AND update_by = #{entity.updateBy}
+            </if>
+            <if test="entity.updateDate != null and entity.updateDate !=''">
+                AND update_date = #{entity.updateDate}
+            </if>
+        </where>
+    </sql>
+
+    <select id="listCompanyIdByUserId" resultType="java.lang.String">
+        SELECT
+          company_id
+        FROM ts_user_company
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="listUserIdByCompanyId" resultType="java.lang.String">
+        SELECT
+          user_id
+        FROM ts_user_company
+        WHERE company_id = #{companyId}
+    </select>
+</mapper>
+

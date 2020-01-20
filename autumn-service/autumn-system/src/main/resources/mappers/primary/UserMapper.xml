@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.system.dao.IUserDao">
+
+    <resultMap id="BaseResult" type="com.whli.autumn.model.system.User">
+        <id column="id" property="id"/>
+        <result column="login_name" property="loginName"/>
+        <result column="password" property="password"/>
+        <result column="trade_number" property="tradeNumber"/>
+        <result column="user_name" property="userName"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="photo" property="photo"/>
+        <result column="login_ip" property="loginIp"/>
+        <result column="login_date" property="loginDate"/>
+        <result column="super_admin" property="superAdmin"/>
+        <result column="enabled" property="enabled"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="remark" property="remark"/>
+        <result column="deleted" property="deleted"/>
+        <result column="depart_id" property="departId"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		id,login_name,password,trade_number,user_name,email,phone,photo,login_ip,login_date,super_admin,enabled,create_by,create_date,update_by,update_date,remark,deleted,depart_id
+
+        ]]>
+	</sql>
+
+    <sql id="conditions">
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND id = #{entity.id}
+            </if>
+            <if test="entity.loginName != null and entity.loginName !=''">
+                AND login_name = #{entity.loginName}
+            </if>
+            <if test="entity.password != null and entity.password !=''">
+                AND password = #{entity.password}
+            </if>
+            <if test="entity.tradeNumber != null and entity.tradeNumber !=''">
+                AND trade_number = #{entity.tradeNumber}
+            </if>
+            <if test="entity.userName != null and entity.userName !=''">
+                AND user_name = #{entity.userName}
+            </if>
+            <if test="entity.email != null and entity.email !=''">
+                AND email = #{entity.email}
+            </if>
+            <if test="entity.phone != null and entity.phone !=''">
+                AND phone = #{entity.phone}
+            </if>
+            <if test="entity.photo != null and entity.photo !=''">
+                AND photo = #{entity.photo}
+            </if>
+            <if test="entity.loginIp != null and entity.loginIp !=''">
+                AND login_ip = #{entity.loginIp}
+            </if>
+            <if test="entity.loginDate != null and entity.loginDate !=''">
+                AND login_date = #{entity.loginDate}
+            </if>
+            <if test="entity.superAdmin != null and entity.superAdmin !=''">
+                AND super_admin = #{entity.superAdmin}
+            </if>
+            <if test="entity.enabled != null and entity.enabled !=''">
+                AND enabled = #{entity.enabled}
+            </if>
+            <if test="entity.createBy != null and entity.createBy !=''">
+                AND create_by = #{entity.createBy}
+            </if>
+            <if test="entity.createDate != null">
+                AND create_date = #{entity.createDate}
+            </if>
+            <if test="entity.updateBy != null and entity.updateBy !=''">
+                AND update_by = #{entity.updateBy}
+            </if>
+            <if test="entity.updateDate != null">
+                AND update_date = #{entity.updateDate}
+            </if>
+            <if test="entity.remark != null and entity.remark !=''">
+                AND remark = #{entity.remark}
+            </if>
+            <if test="entity.deleted != null">
+                AND deleted = #{entity.deleted}
+            </if>
+            <if test="entity.departId != null and entity.departId !=''">
+                AND depart_id = #{entity.departId}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 根据用户名或邮箱或手机号查询 -->
+    <select id="getByLoginNameOrEmailOrPhone" resultMap="BaseResult">
+        SELECT
+            <include refid="columns"/>
+        FROM ts_user
+        WHERE login_name = #{loginName} OR email = #{loginName} OR phone = #{loginName}
+    </select>
+
+    <!-- 依据第三方登录唯一键查询 -->
+    <select id="getByUnionId" resultMap="BaseResult">
+        SELECT
+        <include refid="columns"/>
+        FROM ts_user
+        WHERE union_id = #{unionId}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="listUserByPage" resultMap="BaseResult">
+        SELECT
+            a.id,
+            a.login_name,
+            a.trade_number,
+            a.user_name,
+            a.email,
+            a.phone,
+            a.photo,
+            a.super_admin,
+            a.enabled,
+            a.remark,
+            a.depart_id
+        FROM ts_user a
+        INNER JOIN ts_user_company b ON a.id = b.user_id
+        WHERE a.deleted = 0 AND b.company_id = #{entity.companyId}
+        <if test="entity.loginName != null and entity.loginName !=''">
+            AND a.login_name LIKE CONCAT(CONCAT('%',#{entity.loginName}),'%')
+        </if>
+        <if test="entity.tradeNumber != null and entity.tradeNumber !=''">
+            AND a.trade_number LIKE CONCAT(CONCAT('%',#{entity.tradeNumber}),'%')
+        </if>
+        <if test="entity.userName != null and entity.userName !=''">
+            AND a.user_name = CONCAT(CONCAT('%',#{entity.userName}),'%')
+        </if>
+        <if test="entity.enabled != null and entity.enabled !=''">
+            AND a.enabled = #{entity.enabled}
+        </if>
+        <if test="entity.departId != null and entity.departId !=''">
+            AND a.depart_id = #{entity.departId}
+        </if>
+        ORDER BY a.update_date DESC
+    </select>
+
+    <!-- 启用/禁用用户 -->
+    <update id="updateEnabledByPks">
+        UPDATE ts_user SET enabled = #{entity.enabled}
+        WHERE id IN
+        <foreach collection="entity.ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 验证用户登录名、手机、邮箱唯一性 -->
+    <select id="validate" resultMap="BaseResult">
+        SELECT
+        <include refid="columns"/>
+        FROM ts_user
+        <where>
+            <if test="entity.loginName != null and entity.loginName !=''">
+                AND login_name = #{entity.loginName}
+            </if>
+            <if test="entity.phone != null and entity.phone != ''">
+                AND phone = #{entity.phone}
+            </if>
+            <if test="entity.email != null and entity.email != ''">
+                AND email = #{entity.email}
+            </if>
+            <if test="entity.id != null and entity.id != ''">
+                AND id != #{entity.id}
+            </if>
+        </where>
+    </select>
+</mapper>
+

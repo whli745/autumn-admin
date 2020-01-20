@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.system.dao.IProvincesDao">
+
+    <resultMap id="BaseResult" type="com.whli.autumn.model.system.Provinces">
+        <id column="id" property="id"/>
+        <result column="city_name" property="cityName"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="short_name" property="shortName"/>
+        <result column="depth" property="depth"/>
+        <result column="city_code" property="cityCode"/>
+        <result column="zip_code" property="zipCode"/>
+        <result column="merger_name" property="mergerName"/>
+        <result column="longitude" property="longitude"/>
+        <result column="latitude" property="latitude"/>
+        <result column="pinyin" property="pinyin"/>
+        <result column="use" property="use"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		id,city_name,parent_id,short_name,depth,city_code,zip_code,merger_name,longitude,latitude,pinyin,use
+
+        ]]>
+	</sql>
+
+    <sql id="conditions">
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND id = #{entity.id}
+            </if>
+            <if test="entity.cityName != null and entity.cityName !=''">
+                AND city_name = #{entity.cityName}
+            </if>
+            <if test="entity.parentId != null and entity.parentId !=''">
+                AND parent_id = #{entity.parentId}
+            </if>
+            <if test="entity.shortName != null and entity.shortName !=''">
+                AND short_name = #{entity.shortName}
+            </if>
+            <if test="entity.depth != null and entity.depth !=''">
+                AND depth = #{entity.depth}
+            </if>
+            <if test="entity.cityCode != null and entity.cityCode !=''">
+                AND city_code = #{entity.cityCode}
+            </if>
+            <if test="entity.zipCode != null and entity.zipCode !=''">
+                AND zip_code = #{entity.zipCode}
+            </if>
+            <if test="entity.mergerName != null and entity.mergerName !=''">
+                AND merger_name = #{entity.mergerName}
+            </if>
+            <if test="entity.longitude != null and entity.longitude !=''">
+                AND longitude = #{entity.longitude}
+            </if>
+            <if test="entity.latitude != null and entity.latitude !=''">
+                AND latitude = #{entity.latitude}
+            </if>
+            <if test="entity.pinyin != null and entity.pinyin !=''">
+                AND pinyin = #{entity.pinyin}
+            </if>
+            <if test="entity.use != null and entity.use !=''">
+                AND use = #{entity.use}
+            </if>
+        </where>
+    </sql>
+
+</mapper>
+

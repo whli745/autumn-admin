@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.system.dao.IUserRoleDao">
+
+    <resultMap id="BaseResult" type="com.whli.autumn.model.system.UserRole">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="role_id" property="roleId"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		id,user_id,role_id,create_by,create_date,update_by,update_date
+
+        ]]>
+	</sql>
+
+    <sql id="conditions">
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND id = #{entity.id}
+            </if>
+            <if test="entity.userId != null and entity.userId !=''">
+                AND user_id = #{entity.userId}
+            </if>
+            <if test="entity.roleId != null and entity.roleId !=''">
+                AND role_id = #{entity.roleId}
+            </if>
+            <if test="entity.createBy != null and entity.createBy !=''">
+                AND create_by = #{entity.createBy}
+            </if>
+            <if test="entity.createDate != null and entity.createDate !=''">
+                AND create_date = #{entity.createDate}
+            </if>
+            <if test="entity.updateBy != null and entity.updateBy !=''">
+                AND update_by = #{entity.updateBy}
+            </if>
+            <if test="entity.updateDate != null and entity.updateDate !=''">
+                AND update_date = #{entity.updateDate}
+            </if>
+        </where>
+    </sql>
+
+    <select id="listUserByRole" resultType="com.whli.autumn.system.dto.UserDTO">
+      <choose>
+          <when test="entity.roleId != null and entity.roleId != ''">
+              SELECT
+                  a.id,
+                  a.login_name,
+                  a.user_name,
+                  b.id AS urId
+              FROM ts_user a
+              INNER JOIN ts_user_company c ON a.id = c.user_id
+              LEFT JOIN ts_user_role b ON (a.id = b.user_id AND b.role_id = #{entity.roleId})
+              WHERE a.enabled = '1' AND a.deleted = 0 AND c.company_id = #{entity.companyId}
+          </when>
+          <otherwise>
+              SELECT
+                  a.id,
+                  a.login_name,
+                  a.user_name
+              FROM ts_user a
+              INNER JOIN ts_user_company b ON a.id = b.user_id
+              WHERE a.enabled = '1' AND a.deleted = 0 AND b.company_id = #{entity.companyId}
+          </otherwise>
+      </choose>
+
+    </select>
+</mapper>
+

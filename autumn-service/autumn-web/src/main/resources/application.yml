@@ -1,0 +1,36 @@
+server:
+  servlet:
+    context-path: /autumn
+spring:
+  profiles:
+    active: @profilesActive@
+  freemarker:
+    check-template-location: false
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+    time-zone: GMT+8
+  activiti:
+    check-process-definitions: false
+    db-identity-used: false
+    history-level: full
+mybatis-plus:
+  mapper-locations:
+    - classpath*:mappers/primary/*Mapper.xml
+  config-location: classpath:config/mybatis-config.xml
+  global-config:
+    db-config:
+      select-strategy: not_empty
+      update-strategy: not_empty
+      insert-strategy: not_empty
+app:
+  expiration: 43200 #秒
+  matchers: "/v2/api-docs,/webjars/**,/swagger-resources/**,/configuration/**,/swagger-ui.html,/auth/**,/upload/**,
+          /**/upLoad*,/**/downLoad*,/model/**,/editor/**,/diagram-viewer/**,/editor-app/**,/modeler.html"
+license: #授权
+  publicAlias: publicCert
+  publicKeysStorePath: /publicCerts.keystore
+  storePass: e05fc2a074c362789d2f392a8fa34ce62572853a
+  subject: autumn
+swagger:
+  base-package: 'com.whli.autumn'

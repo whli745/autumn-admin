@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.system.dao.IRoleMenuDao">
+
+    <resultMap id="BaseResult" type="com.whli.autumn.model.system.RoleMenu">
+        <id column="id" property="id"/>
+        <result column="role_id" property="roleId"/>
+        <result column="menu_id" property="menuId"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		id,role_id,menu_id,create_by,create_date,update_by,update_date
+
+        ]]>
+	</sql>
+
+    <sql id="conditions">
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND id = #{entity.id}
+            </if>
+            <if test="entity.roleId != null and entity.roleId !=''">
+                AND role_id = #{entity.roleId}
+            </if>
+            <if test="entity.menuId != null and entity.menuId !=''">
+                AND menu_id = #{entity.menuId}
+            </if>
+            <if test="entity.createBy != null and entity.createBy !=''">
+                AND create_by = #{entity.createBy}
+            </if>
+            <if test="entity.createDate != null and entity.createDate !=''">
+                AND create_date = #{entity.createDate}
+            </if>
+            <if test="entity.updateBy != null and entity.updateBy !=''">
+                AND update_by = #{entity.updateBy}
+            </if>
+            <if test="entity.updateDate != null and entity.updateDate !=''">
+                AND update_date = #{entity.updateDate}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 依据角色删除 -->
+    <delete id="deleteByRole">
+        DELETE FROM ts_role_menu WHERE role_id = #{roleId}
+    </delete>
+
+    <!-- 根据角色查询菜单 -->
+    <select id="listByRole" resultType="java.lang.String">
+        SELECT menu_id FROM ts_role_menu WHERE role_id = #{roleId}
+    </select>
+</mapper>
+

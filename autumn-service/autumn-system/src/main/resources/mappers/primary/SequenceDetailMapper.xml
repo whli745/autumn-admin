@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.system.dao.ISequenceDetailDao">
+
+    <resultMap id="BaseResult" type="com.whli.autumn.model.system.SequenceDetail">
+        <id column="id" property="id"/>
+        <result column="sequence_id" property="sequenceId"/>
+        <result column="type" property="type"/>
+        <result column="value" property="value"/>
+        <result column="sort" property="sort"/>
+        <result column="length" property="length"/>
+        <result column="format" property="format"/>
+        <result column="delimit" property="delimit"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		id,sequence_id,type,value,sort,length,format,delimit,create_by,create_date,update_by,update_date
+
+        ]]>
+	</sql>
+
+    <sql id="conditions">
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND id = #{entity.id}
+            </if>
+            <if test="entity.sequenceId != null and entity.sequenceId !=''">
+                AND sequence_id = #{entity.sequenceId}
+            </if>
+            <if test="entity.type != null and entity.type !=''">
+                AND type = #{entity.type}
+            </if>
+            <if test="entity.value != null and entity.value !=''">
+                AND value = #{entity.value}
+            </if>
+            <if test="entity.sort != null and entity.sort !=''">
+                AND sort = #{entity.sort}
+            </if>
+            <if test="entity.length != null and entity.length !=''">
+                AND length = #{entity.length}
+            </if>
+            <if test="entity.format != null and entity.format !=''">
+                AND format = #{entity.format}
+            </if>
+            <if test="entity.delimit != null and entity.delimit !=''">
+                AND delimit = #{entity.delimit}
+            </if>
+            <if test="entity.createBy != null and entity.createBy !=''">
+                AND create_by = #{entity.createBy}
+            </if>
+            <if test="entity.createDate != null and entity.createDate !=''">
+                AND create_date = #{entity.createDate}
+            </if>
+            <if test="entity.updateBy != null and entity.updateBy !=''">
+                AND update_by = #{entity.updateBy}
+            </if>
+            <if test="entity.updateDate != null and entity.updateDate !=''">
+                AND update_date = #{entity.updateDate}
+            </if>
+        </where>
+    </sql>
+
+    <select id="getByBarcode" resultMap="BaseResult">
+        SELECT
+          a.*
+        FROM ts_sequence_detail a
+        INNER JOIN ts_sequence b ON a.sequence_id = b.id
+        INNER JOIN ts_barcode c ON b.id = c.sequence_id
+        WHERE c.code = #{code}
+    </select>
+</mapper>
+

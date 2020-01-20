@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.system.dao.IOperationLogDao">
+
+    <resultMap id="BaseResult" type="com.whli.autumn.model.system.OperationLog">
+        <id column="id" property="id"/>
+        <result column="opertion_type" property="opertionType"/>
+        <result column="table_name" property="tableName"/>
+        <result column="operation_detail" property="operationDetail"/>
+        <result column="request_uri" property="requestUri"/>
+        <result column="ip" property="ip"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+
+    <resultMap id="BaseMapResult" type="java.util.Map" extends="BaseResult">
+
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		id,opertion_type,table_name,operation_detail,request_uri,ip,create_by,create_date,update_by,update_date
+
+        ]]>
+	</sql>
+
+    <sql id="conditions">
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND id = #{entity.id}
+            </if>
+            <if test="entity.opertionType != null and entity.opertionType !=''">
+                AND opertion_type = #{entity.opertionType}
+            </if>
+            <if test="entity.tableName != null and entity.tableName !=''">
+                AND table_name = #{entity.tableName}
+            </if>
+            <if test="entity.operationDetail != null and entity.operationDetail !=''">
+                AND operation_detail = #{entity.operationDetail}
+            </if>
+            <if test="entity.requestUri != null and entity.requestUri !=''">
+                AND request_uri = #{entity.requestUri}
+            </if>
+            <if test="entity.ip != null and entity.ip !=''">
+                AND ip = #{entity.ip}
+            </if>
+            <if test="entity.createBy != null and entity.createBy !=''">
+                AND create_by = #{entity.createBy}
+            </if>
+            <if test="entity.createDate != null and entity.createDate !=''">
+                AND create_date = #{entity.createDate}
+            </if>
+            <if test="entity.updateBy != null and entity.updateBy !=''">
+                AND update_by = #{entity.updateBy}
+            </if>
+            <if test="entity.updateDate != null and entity.updateDate !=''">
+                AND update_date = #{entity.updateDate}
+            </if>
+        </where>
+    </sql>
+
+</mapper>
+

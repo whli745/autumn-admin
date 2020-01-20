@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whli.autumn.job.dao.IJobLogDao">
+
+    <resultMap id="BaseResult" type="com.whli.autumn.model.job.JobLog">
+        <id column="id" property="id"/>
+        <result column="job_name" property="jobName"/>
+        <result column="job_group" property="jobGroup"/>
+        <result column="job_class" property="jobClass"/>
+        <result column="exec_time" property="execTime"/>
+        <result column="duration" property="duration"/>
+        <result column="job_msg" property="jobMsg"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		id,job_name,job_group,job_class,exec_time,duration,job_msg,create_by,create_date
+
+        ]]>
+	</sql>
+
+    <sql id="conditions">
+        <where>
+            <if test="entity.id != null and entity.id !=''">
+                AND id = #{entity.id}
+            </if>
+            <if test="entity.jobName != null and entity.jobName !=''">
+                AND job_name = #{entity.jobName}
+            </if>
+            <if test="entity.jobGroup != null and entity.jobGroup !=''">
+                AND job_group = #{entity.jobGroup}
+            </if>
+            <if test="entity.jobClass != null and entity.jobClass !=''">
+                AND job_class = #{entity.jobClass}
+            </if>
+            <if test="entity.execTime != null and entity.execTime !=''">
+                AND exec_time = #{entity.execTime}
+            </if>
+            <if test="entity.duration != null and entity.duration !=''">
+                AND duration = #{entity.duration}
+            </if>
+            <if test="entity.jobMsg != null and entity.jobMsg !=''">
+                AND job_msg = #{entity.jobMsg}
+            </if>
+            <if test="entity.createBy != null and entity.createBy !=''">
+                AND create_by = #{entity.createBy}
+            </if>
+            <if test="entity.createDate != null and entity.createDate !=''">
+                AND create_date = #{entity.createDate}
+            </if>
+        </where>
+    </sql>
+</mapper>
+
