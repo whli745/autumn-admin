@@ -45,7 +45,7 @@
 
         <!-- Spring Settings -->
         <spring-cloud-alibaba.version>2.1.0.RELEASE</spring-cloud-alibaba.version>
-        <spring.version>5.1.9.RELEASE</spring.version>
+        <spring.version>5.2.3.RELEASE</spring.version>
 
         <!-- Activity -->
         <activiti-spring-boot-starter-basic.version>5.23.0</activiti-spring-boot-starter-basic.version>
