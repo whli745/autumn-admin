@@ -51,7 +51,7 @@
         <activiti-spring-boot-starter-basic.version>5.23.0</activiti-spring-boot-starter-basic.version>
 
         <!-- Quartz -->
-        <quartz.vesion>2.3.0</quartz.vesion>
+        <quartz.vesion>2.3.2</quartz.vesion>
     </properties>
 
     <!-- 依赖管理 -->
